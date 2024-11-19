@@ -31,3 +31,9 @@ _Depending on the model you choose to use, not all of these packages may be requ
   `C:\Users\Admin\AppData\Local\Programs\Python\Python311` (My python path)
 
 - **VSCode:** `py -V:3.11 .\speech_to_text.py`
+
+## Sources
+
+- [https://realpython.com/python-speech-recognition/](https://realpython.com/python-speech-recognition/)
+- [https://www.simplilearn.com/tutorials/python-tutorial/speech-recognition-in-python](https://www.simplilearn.com/tutorials/python-tutorial/speech-recognition-in-python)
+- [https://medium.com/naukri-engineering/speech-recognition-in-python-fcda027a97a1](https://medium.com/naukri-engineering/speech-recognition-in-python-fcda027a97a1)
