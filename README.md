@@ -2,13 +2,9 @@
 
 ## Overview
 
-This script implements a speech recognition service that listens for audio input and provides recognized text through a Flask-based web server. It uses the **any supported** speech recognition engine to continuously listen for speech via the microphone and updates the recognized text in real time.
+This script implements a speech recognition service that listens for audio input and provides recognized text through a Flask-based web server. It uses any **supported** speech recognition engine to continuously listen for speech via the microphone and updates the recognized text in real time.
 
-There are two key endpoints provided by the Flask server:
-
-- **`/get_text_id`**: Returns the current `text_id`. This ID increments with each new recognized text.
-- **`/get_text`**: Returns the currently recognized text as plain text.
-- **`/update_text`**: Allows for manually updating the recognized text via a POST request.
+The Flask server acts as an interface, offering multiple endpoints for connectivity and interaction.
 
 The script runs the speech recognition loop in a separate thread, allowing it to continuously capture speech while serving the web endpoints concurrently.
 
