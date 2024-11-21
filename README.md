@@ -2,19 +2,20 @@
 
 ## Overview
 
-This script implements a speech recognition service that listens for audio input and provides recognized text through a Flask-based web server. It uses any **supported** speech recognition engine to continuously listen for speech via the microphone and updates the recognized text in real time.
+This script implements a speech recognition service that listens for audio input and provides recognized text through a FastAPI-based web server. It uses a speech recognition engine (default: Vosk) to continuously process speech from the microphone and updates the recognized text in real time.
 
-The Flask server acts as an interface, offering multiple endpoints for connectivity and interaction.
+The FastAPI server offers multiple endpoints for connectivity, including WebSocket support for real-time updates to connected clients.
 
-The script runs the speech recognition loop in a separate thread, allowing it to continuously capture speech while serving the web endpoints concurrently.
+The script runs the speech recognition loop in a separate thread, allowing it to continuously capture speech while the server handles API requests and WebSocket connections concurrently.
 
 ## Instructions
 
-**Warning:** Do not use with `Python 3.13.X`, as most plugins are not yet compatible. Instead, use `Python 3.11` or `3.12`.
+**Warning:** Do not use with `Python 3.13`, as most plugins are not yet compatible. Instead, use `Python 3.11` or `3.12`.  
+  I personally use `3.11.3` at the moment.
 
 ### How to run
 
-... if you have multiple python installations (and the default installation is not 3.11):
+... if you have multiple python installations (and the default installation is not `3.11`):
 
 - In your terminal locate the `Python311` folder.  
   For me it's: `C:\Users\Admin\AppData\Local\Programs\Python\Python311`
@@ -54,8 +55,11 @@ The following packages are not automatically installed by `pip` and need to be i
 - **[soundfile](https://pypi.org/project/soundfile/)**  
   Library for reading and writing sound files.
 
-- **[Flask](https://pypi.org/project/Flask/)**  
-  Flask is a lightweight WSGI web application framework.
+- **[uvicorn](https://pypi.org/project/uvicorn/)**  
+  Uvicorn is an ASGI web server implementation for Python.
+
+- **[fastapi](https://pypi.org/project/fastapi/)**  
+  FastAPI is a modern, high-performance, web framework for building APIs with Python based on standard Python type hints.
 
 ---
 
