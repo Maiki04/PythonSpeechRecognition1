@@ -1,0 +1,16 @@
+{
+    "microphone": {
+        "sample_rate": 22050,
+        "chunk_size": 128
+    },
+    "recognizer": {
+        "adjust_for_ambient_noise_duration": 5.0,
+        "energy_threshold": 180,
+        "pause_threshold": 0.55,
+        "phrase_time_limit": 3
+    },
+    "ai": {
+        "language": "en-US",
+        "vosk_model_path": "model"
+    }
+}

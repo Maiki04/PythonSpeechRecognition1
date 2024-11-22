@@ -1,8 +1,8 @@
-# pylint: disable=broad-exception-caught, global-statement, invalid-name, missing-function-docstring
+# pylint: disable=broad-exception-caught, global-statement, invalid-name, line-too-long, missing-function-docstring, multiple-statements
 '''Module Docstring'''
 
 from asyncio import run as asyncio_run
-from json import loads as json_loads
+from json import load as json_load, loads as json_loads
 from threading import Thread
 from typing import List
 
@@ -16,6 +16,12 @@ app = FastAPI()
 
 # Shared state
 recognized_text = ""
+
+
+def load_config(config_path: str):
+    """Load configuration from a JSON file."""
+    with open(config_path, 'r', encoding='utf-8') as file:
+        return json_load(file)
 
 
 # WebSocket connection manager
@@ -43,16 +49,27 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-def audio_recognition_loop():
+def audio_recognition_loop(config_path="keyword_recognition_config.json"):
     '''audio_recognition_loop'''
     global recognized_text
     recognizer = sr.Recognizer()
 
-    while True:
-        try:
-            with sr.Microphone() as source:
+    config = load_config(config_path)
+
+    with sr.Microphone(sample_rate=config["microphone"]["sample_rate"], chunk_size=config["microphone"]["chunk_size"]) as source:
+        # Optional adjustment for filtering ambient noise
+        print("Adjusting for ambient noise, please don't talk...")
+        recognizer.adjust_for_ambient_noise(source, duration=config["recognizer"]["adjust_for_ambient_noise_duration"])
+
+        recognizer.energy_threshold = config["recognizer"]["energy_threshold"] # Sensitivity for picking up audio
+        recognizer.pause_threshold  = config["recognizer"]["pause_threshold"]
+
+        while True:
+            try:
                 print("Listening for speech...")
-                recognized_text = recognizer.recognize_vosk(recognizer.listen(source))
+                # Adjust phrase_time_limit for shorter audio chunks
+                audio = recognizer.listen(source, phrase_time_limit=config["recognizer"]["phrase_time_limit"])
+                recognized_text = recognizer.recognize_vosk(audio, language=config["ai"]["language"])
                 recognized_text = json_loads(recognized_text)["text"]
 
                 print(f"Recognized: {recognized_text}")
@@ -60,9 +77,9 @@ def audio_recognition_loop():
                 # Notify WebSocket clients
                 asyncio_run(manager.broadcast(recognized_text))
 
-        except Exception as e:
-            print(f"Error during recognition: {e}")
-            recognized_text = ""
+            except Exception as e:
+                print(f"Error during recognition: {e}")
+                recognized_text = ""
 
 
 @app.get('/get_text', response_class=PlainTextResponse)

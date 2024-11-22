@@ -30,11 +30,13 @@ The script runs the speech recognition loop in a separate thread, allowing it to
 
 ---
 
-**When using vosk** for speech recognition, copy a vosk model (folder) from the `voskModels` folder (e.g. `vosk-model-en-us-0.22`) and paste it into the projects main folder (e.g. have it sit next to the `speech_to_text.py` script).
+**When using Vosk** for speech recognition, copy a Vosk model (folder) from the `voskModels` folder (e.g. `vosk-model-en-us-0.22`) and paste it into the projects main folder (e.g. have it sit next to the `speech_to_text.py` script).
 
-Delete the current `model` folder and rename the vosk model folder you've just choosen to `model`.
+Delete the current `model` folder and rename the Vosk model folder you've just choosen to `model`.
 
-You can download additional vosk models from [https://alphacephei.com/vosk/models](https://alphacephei.com/vosk/models).
+You can download additional Vosk models from [https://alphacephei.com/vosk/models](https://alphacephei.com/vosk/models).
+
+**When using TensorFlow** for speech recognition, make sure to use a compatible TensorFlow version, e.g. `1.x` (`pip install tensorflow==1.15.5`) instead of `2.x` (`pip install tensorflow`). This is required because the `speech_recognition` package relies on an older TensorFlow API (from TensorFlow `1.x`)
 
 ### Required Packages
 
