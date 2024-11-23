@@ -8,8 +8,10 @@ from typing import List
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import PlainTextResponse
-import speech_recognition as sr  # type: ignore
+import pyaudio # type: ignore
+#import speech_recognition as sr  # type: ignore
 import uvicorn
+import vosk # type: ignore
 
 
 app = FastAPI()
@@ -49,37 +51,65 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
+# def audio_recognition_loop(config_path="keyword_recognition_config.json"):
+#     '''audio_recognition_loop'''
+#     global recognized_text
+#     recognizer = sr.Recognizer()
+
+#     config = load_config(config_path)
+
+#     with sr.Microphone(sample_rate=config["microphone"]["sample_rate"], chunk_size=config["microphone"]["chunk_size"]) as source:
+#         # Optional adjustment for filtering ambient noise
+#         print("Adjusting for ambient noise, please don't talk...")
+#         recognizer.adjust_for_ambient_noise(source, duration=config["recognizer"]["adjust_for_ambient_noise_duration"])
+
+#         recognizer.energy_threshold = config["recognizer"]["energy_threshold"] # Sensitivity for picking up audio
+#         recognizer.pause_threshold  = config["recognizer"]["pause_threshold"]
+
+#         while True:
+#             try:
+#                 print("Listening for speech...")
+#                 # Adjust phrase_time_limit for shorter audio chunks
+#                 audio = recognizer.listen(source, phrase_time_limit=config["recognizer"]["phrase_time_limit"])
+#                 recognized_text = recognizer.recognize_vosk(audio, language=config["ai"]["language"])
+#                 recognized_text = json_loads(recognized_text)["text"]
+
+#                 print(f"Recognized: {recognized_text}")
+
+#                 # Notify WebSocket clients
+#                 asyncio_run(manager.broadcast(recognized_text))
+
+#             except Exception as e:
+#                 print(f"Error during recognition: {e}")
+#                 recognized_text = ""
+
+
 def audio_recognition_loop(config_path="keyword_recognition_config.json"):
-    '''audio_recognition_loop'''
     global recognized_text
-    recognizer = sr.Recognizer()
 
     config = load_config(config_path)
 
-    with sr.Microphone(sample_rate=config["microphone"]["sample_rate"], chunk_size=config["microphone"]["chunk_size"]) as source:
-        # Optional adjustment for filtering ambient noise
-        print("Adjusting for ambient noise, please don't talk...")
-        recognizer.adjust_for_ambient_noise(source, duration=config["recognizer"]["adjust_for_ambient_noise_duration"])
+    recognizer = vosk.KaldiRecognizer(vosk.Model(config["vosk"]["vosk_model_path"]), config["general"]["sample_rate"])
+    #recognizer = sr.Recognizer()
 
-        recognizer.energy_threshold = config["recognizer"]["energy_threshold"] # Sensitivity for picking up audio
-        recognizer.pause_threshold  = config["recognizer"]["pause_threshold"]
+    # Open a stream
+    audio_interface = pyaudio.PyAudio()
+    stream = audio_interface.open(format=pyaudio.paInt16, channels=1, rate=config["general"]["sample_rate"], input=True, frames_per_buffer=config["pyaudio"]["frames_per_buffer"])
+    stream.start_stream()
 
-        while True:
-            try:
-                print("Listening for speech...")
-                # Adjust phrase_time_limit for shorter audio chunks
-                audio = recognizer.listen(source, phrase_time_limit=config["recognizer"]["phrase_time_limit"])
-                recognized_text = recognizer.recognize_vosk(audio, language=config["ai"]["language"])
-                recognized_text = json_loads(recognized_text)["text"]
+    print("Listening for speech...")
+    while True:
+        try:
+            audio_data = stream.read(config["pyaudio"]["data_chunk_size"], exception_on_overflow=False)
 
+            if recognizer.AcceptWaveform(audio_data):
+                recognized_text = json_loads(recognizer.Result())['text']
                 print(f"Recognized: {recognized_text}")
-
-                # Notify WebSocket clients
                 asyncio_run(manager.broadcast(recognized_text))
 
-            except Exception as e:
-                print(f"Error during recognition: {e}")
-                recognized_text = ""
+        except Exception as e:
+            print(f"Error during recognition: {e}")
+            recognized_text = ""
 
 
 @app.get('/get_text', response_class=PlainTextResponse)

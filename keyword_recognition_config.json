@@ -1,16 +1,12 @@
 {
-    "microphone": {
-        "sample_rate": 22050,
-        "chunk_size": 128
+    "general": {
+        "sample_rate": 16000
     },
-    "recognizer": {
-        "adjust_for_ambient_noise_duration": 5.0,
-        "energy_threshold": 180,
-        "pause_threshold": 0.55,
-        "phrase_time_limit": 3
+    "pyaudio": {
+        "frames_per_buffer": 16,
+        "data_chunk_size": 8
     },
-    "ai": {
-        "language": "en-US",
+    "vosk": {
         "vosk_model_path": "model"
     }
 }

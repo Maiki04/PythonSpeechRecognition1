@@ -23,7 +23,9 @@ func _notification(what: int) -> void:
 
 func _ready():
 	event_timer.one_shot = true
+	add_child(event_timer, false, Node.INTERNAL_MODE_FRONT)
 	connection_timer.one_shot = true
+	add_child(connection_timer, false, Node.INTERNAL_MODE_FRONT)
 
 	var err: Error = socket.connect_to_url(URL)
 	if err == OK:
