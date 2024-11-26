@@ -95,10 +95,10 @@ func _get_state_name(state: int) -> String:
 func _process_content(data_string: String) -> void:
 	# Simulated is_action_just_pressed behaviour on a custom input action.
 	match data_string:
-		"right": event.action = "move_right"
-		"left":  event.action = "move_left"
-		"jump":  event.action = "jump"
-		"down":  event.action = "dodge"
+		"r": event.action = "move_right"
+		"l": event.action = "move_left"
+		"j": event.action = "jump"
+		"d": event.action = "dodge"
 		_:
 			return
 
