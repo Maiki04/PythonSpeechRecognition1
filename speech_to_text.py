@@ -8,8 +8,8 @@ from typing import List
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import PlainTextResponse
+from fuzzywuzzy import process # type: ignore
 import pyaudio # type: ignore
-#import speech_recognition as sr  # type: ignore
 import uvicorn
 import vosk # type: ignore
 
@@ -50,7 +50,7 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-
+#Depricated Code! Momentarily left in for consideration purposes.
 # def audio_recognition_loop(config_path="keyword_recognition_config.json"):
 #     '''audio_recognition_loop'''
 #     global recognized_text
@@ -88,9 +88,7 @@ def audio_recognition_loop(config_path="keyword_recognition_config.json"):
     global recognized_text
 
     config = load_config(config_path)
-
     recognizer = vosk.KaldiRecognizer(vosk.Model(config["vosk"]["vosk_model_path"]), config["general"]["sample_rate"])
-    #recognizer = sr.Recognizer()
 
     # Open a stream
     audio_interface = pyaudio.PyAudio()
@@ -105,11 +103,33 @@ def audio_recognition_loop(config_path="keyword_recognition_config.json"):
             if recognizer.AcceptWaveform(audio_data):
                 recognized_text = json_loads(recognizer.Result())['text']
                 print(f"Recognized: {recognized_text}")
-                asyncio_run(manager.broadcast(recognized_text))
+                asyncio_run(manager.broadcast(single_word_fuzzy_regex(recognized_text)))
 
         except Exception as e:
             print(f"Error during recognition: {e}")
             recognized_text = ""
+
+        finally:
+            recognized_text = ""
+
+
+def single_word_fuzzy_regex(text, tolerance=58):
+    tr_input_dict = {
+        "right" : "r",
+        "left"  : "l",
+        "jump"  : "j",
+        "down"  : "d",
+    }
+    result = process.extractOne(text, tr_input_dict.keys(), score_cutoff=tolerance)
+
+    if result is not None:
+        best_match, score = result
+        user_input = tr_input_dict[best_match]
+        print(f"Recognized match: {best_match} | {user_input} | {score}")
+        return user_input
+
+    print(f"No match found for: {text}")
+    return ""
 
 
 @app.get('/get_text', response_class=PlainTextResponse)
