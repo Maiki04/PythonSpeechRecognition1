@@ -1,3 +1,7 @@
+# Ignore venv folder
+venv/
+.venv/
+
 # Ignore model folders
 voskModels/vosk-model-en-us-0.22
 
