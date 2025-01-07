@@ -119,6 +119,10 @@ def single_word_fuzzy_regex(text, tolerance=58):
         "left"  : "l",
         "jump"  : "j",
         "down"  : "d",
+        "pause" : "pause",
+        "continue" : "continue",
+        "restart" : "restart",
+        "quit" : "quit",
     }
     result = process.extractOne(text, tr_input_dict.keys(), score_cutoff=tolerance)
 
