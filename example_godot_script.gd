@@ -49,17 +49,14 @@ func _retry_connection():
 		print("Failed to connect after ", max_connection_retries, " attempts.")
 
 
-func _physics_process(delta):
-	# WebSocket-Polling
+func _process(delta):
 	socket.poll()
 	var state: WebSocketPeer.State = socket.get_ready_state()
 
 	if state == WebSocketPeer.STATE_OPEN:
 		while socket.get_available_packet_count():
 			var packet: PackedByteArray = socket.get_packet()
-			#var is_packet_empty: bool = packet.is_empty()
 
-			# Convert the paket to String.
 			var data_string: String = packet.get_string_from_utf8()
 
 			print(packet)
@@ -95,6 +92,18 @@ func _get_state_name(state: int) -> String:
 func _process_content(data_string: String) -> void:
 	# Simulated is_action_just_pressed behaviour on a custom input action.
 	match data_string:
+		"pause":
+			GlobalEventBus.pause.emit()
+			return
+		"continue":
+			GlobalEventBus.continue_.emit()
+			return
+		"restart":
+			GlobalEventBus.restart_button.emit()
+			return
+		"quit":
+			GlobalEventBus.quit.emit()
+			return
 		"r": event.action = "move_right"
 		"l": event.action = "move_left"
 		"j": event.action = "jump"
