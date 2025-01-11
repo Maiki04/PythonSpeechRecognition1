@@ -3,8 +3,8 @@
         "sample_rate": 16000
     },
     "pyaudio": {
-        "frames_per_buffer": 16,
-        "data_chunk_size": 8
+        "frames_per_buffer": 32,
+        "data_chunk_size": 128
     },
     "vosk": {
         "vosk_model_path": "model"
