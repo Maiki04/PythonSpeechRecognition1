@@ -53,29 +53,46 @@ manager = ConnectionManager()
 command_history: dict[str, float] = {}
 
 
-def single_word_fuzzy_regex(word, partial=False, tolerance=2):
-    """Fuzzy match a single word against predefined commands."""
+def single_word_fuzzy_regex(word, partial=False):
+    """Fuzzy match a single word against predefined commands with group-specific tolerances."""
 
+    # Command groups with associated tolerances
     command_mapping = {
-        "right" : "r",
-        "left"  : "l",
-        "jump"  : "j",
-        "down"  : "d",
-        "pause" : "pause",
-        "continue" : "continue",
-        "restart" : "restart",
-        "quit" : "quit",
+        "movement": {
+            "right" : "r",
+            "left"  : "l",
+            "jump"  : "j",
+            "down"  : "d",
+        },
+        "menu": {
+            "pause" : "pause",
+            "continue" : "continue",
+            "restart" : "restart",
+            "quit" : "quit",
+        },
+    }
+
+    tolerances = {
+        "movement" : 5,
+        "menu" : 2,
     }
 
     current_time = time.time()
     cooldown_time = 0.4 if partial else 0.6
 
-    best_match = min(command_mapping.keys(), key=lambda cmd: levenshtein_distance(word, cmd))
+    flattened_mapping = {
+        cmd: (group, output)
+        for group, commands in command_mapping.items()
+        for cmd, output in commands.items()
+    }
+
+    best_match = min(flattened_mapping.keys(), key=lambda cmd: levenshtein_distance(word, cmd))
     distance = levenshtein_distance(word, best_match)
 
-    if distance <= tolerance:
-        user_input = command_mapping[best_match]
+    group, user_input = flattened_mapping[best_match]
+    tolerance = tolerances[group]
 
+    if distance <= tolerance:
         # Prevent duplicates / Skip duplicate commands
         if best_match in command_history:
             last_time = command_history[best_match]
