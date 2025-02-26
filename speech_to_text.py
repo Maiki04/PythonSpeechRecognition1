@@ -70,11 +70,17 @@ def single_word_fuzzy_regex(word, partial=False):
             "restart" : "restart",
             "quit" : "quit",
         },
+        "mode": {
+            "slow" : "slow",
+            "normal" : "normal",
+            "fast" : "fast",
+        },
     }
 
     tolerances = {
         "movement" : 5,
         "menu" : 2,
+        "mode" : 3,
     }
 
     current_time = time.time()
