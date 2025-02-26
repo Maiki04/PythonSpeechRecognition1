@@ -4,6 +4,8 @@ venv/
 
 # Ignore model folders
 voskModels/vosk-model-en-us-0.22
+dataset/
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
