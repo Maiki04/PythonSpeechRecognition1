@@ -2,7 +2,7 @@
 venv/
 .venv/
 
-# Ignore AI
+# Ignore model folders
 voskModels/vosk-model-en-us-0.22
 dataset/
 logs/
