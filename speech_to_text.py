@@ -80,7 +80,7 @@ def single_word_fuzzy_regex(word, partial=False):
     tolerances = {
         "movement" : 5,
         "menu" : 2,
-        "mode" : 3,
+        "mode" : 2,
     }
 
     current_time = time.time()
