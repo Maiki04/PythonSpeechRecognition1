@@ -94,12 +94,16 @@ def single_word_fuzzy_regex(word, partial=False):
             "normal" : "normal",
             "fast" : "fast",
         },
+        "main_menu" : {
+            "start" : "start",
+        },
     }
 
     tolerances = {
         "movement" : 5,
         "menu" : 2,
         "mode" : 3,
+        "main_menu" : 2,
     }
 
     current_time = time.time()
